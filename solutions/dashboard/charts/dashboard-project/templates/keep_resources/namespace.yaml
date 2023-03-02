@@ -1,0 +1,10 @@
+{{- if .Values.namespace.create -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dashboard
+  annotations:
+    "helm.sh/resource-policy": "keep"
+  labels:
+    name: dashboard
+{{- end }}

@@ -1,3 +1,15 @@
+namespace: 
+  create: true
+  
+local_path_provisioner:
+  create: true
+  provisioner: rancher.io/local-path
+  volumeBindingMode: WaitForFirstConsumer
+  reclaimPolicy: Retain
+
+volumeClaimTemplates:
+  storageClass: local-path
+
 tools:
   namespace: ""
   dashboard_secret_name: ""
@@ -14,6 +26,19 @@ dashboard_configmap:
   mongodb_connection_url: "dashboard-mongodb.dashboard.svc.cluster.local:27017"
   github_api_baseurl: "https://api.github.com"
   jenkins_server_url: ""
+
+# Secret with initial passwords
+# Codacy, GitHub and Jenkins credentials must be provided by user
+dashboard_secret:
+  mongodb_username: ""
+  mongodb_password: ""
+  codacy_api_token: ""
+  github_token: ""
+  jenkins_username: ""
+  jenkins_token: ""
+  elasticsearch_username: ""
+  elasticsearch_password: ""
+  logstash_password: ""
 
 codacy:
   name: ""
@@ -149,6 +174,3 @@ portscanner:
       requests:
         memory: "256Mi"
         cpu: "300m"
-
-volumeClaimTemplates:
-  storageClass: local-path
