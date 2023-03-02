@@ -1,9 +1,23 @@
 operator:
   namespace: ""
+  createNamespace: true
 
 tools:
   namespace: ""
+  createNamespace: true
   version: 8.4.1
+
+local_path_provisioner:
+  create: true
+  provisioner: rancher.io/local-path
+  volumeBindingMode: WaitForFirstConsumer
+  reclaimPolicy: Retain
+
+volumeClaimTemplates:
+  storageClass: local-path
+
+elastic_user:
+  password: ""
 
 elasticsearch:
   name: ""
@@ -36,6 +50,3 @@ kibana:
     port: 5601
     targetPort: 5601
     nodePort: 30081
-
-volumeClaimTemplates:
-  storageClass: local-path
