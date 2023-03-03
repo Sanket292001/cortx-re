@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-job
+  namespace: dashboard
+  annotations:    
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    spec:
+      serviceAccountName: init-job
+      containers:
+      - name: init-job
+        image: debian:buster                
+        command: [ "/bin/bash", "-c", "--" ]
+        args:
+          - "sh /data/configure.sh"
+        volumeMounts:
+          - mountPath: /data
+            name: config-volume
+      restartPolicy: Never
+      volumes:
+        - name: config-volume
+          configMap:
+            name: init-job

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-job
+  namespace: dashboard
+data:
+  configure.sh: |- 
+    #! /bin/bash
+
+    apt update && apt install -y curl
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && \
+          chmod +x ./kubectl && \
+          mv ./kubectl /usr/local/bin/kubectl
+    kubectl version --short
+    
+    # Trigger Logstash Job
+    kubectl create job --from=cronjob/dashboard-logstash dashboard-logstash-manual-002 -n dashboard
