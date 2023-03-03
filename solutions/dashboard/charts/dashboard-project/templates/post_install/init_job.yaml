@@ -30,7 +30,7 @@ spec:
               secretKeyRef:
                 key: elasticsearch_password
                 name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}                
-      restartPolicy: Never
+      restartPolicy: Never            
       volumes:
         - name: config-volume
           configMap:

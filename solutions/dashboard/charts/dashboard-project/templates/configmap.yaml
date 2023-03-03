@@ -39,43 +39,32 @@ data:
     # Triggring Jobs
     displaySection "Trigger CronJobs"
 
+
     # Trigger Codacy Job only if it allowed to create
-    {{- if .Values.tools.create.codacy -}}
-    {
-      kubectl create job --from=cronjob/dashboard-codacy dashboard-codacy-manual-001 -n dashboard
-      echo "Codacy CronJob Trigger Successful"
-    } || {
-      echo "Codacy CronJob Trigger Failed"
-    }
-    {{- end }}
+
+    {{ if .Values.tools.create.codacy }}
+      kubectl create job --from=cronjob/dashboard-codacy dashboard-codacy-manual-001 -n dashboard      
+    {{ end }}
+
 
     # Trigger GitHub Job only if it allowed to create
-    {{- if .Values.tools.create.github -}}
-    {
-      kubectl create job --from=cronjob/dashboard-github dashboard-github-manual-001 -n dashboard
-      echo "GitHub CronJob Trigger Successful"
-    } || {
-      echo "GitHub CronJob Trigger Failed"
-    }
-    {{- end }}
+    
+    {{ if .Values.tools.create.github }}    
+      kubectl create job --from=cronjob/dashboard-github dashboard-github-manual-001 -n dashboard      
+    {{ end }}
+
 
     # Trigger Jenkins Job only if it allowed to create
-    {{- if .Values.tools.create.jenkins -}}
-    {
+    
+    {{ if .Values.tools.create.jenkins }}    
       kubectl create job --from=cronjob/dashboard-jenkins dashboard-jenkins-manual-001 -n dashboard
-      echo "Jenkins CronJob Trigger Successful"
-    } || {
-      echo "Jenkins CronJob Trigger Failed"
-    }
-    {{- end }}
+    {{ end }}
+
 
     # Always Trigger Logstash Job
-    {
-      kubectl create job --from=cronjob/dashboard-logstash dashboard-logstash-manual-002 -n dashboard
-      echo "Logstash CronJob Trigger Successful"
-    } || {
-      echo "Logstash CronJob Trigger Failed"
-    }
+    
+    kubectl create job --from=cronjob/dashboard-logstash dashboard-logstash-manual-001 -n dashboard
+    
     
 
     
