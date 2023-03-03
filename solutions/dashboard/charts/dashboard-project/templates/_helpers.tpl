@@ -2,6 +2,10 @@
 Defining resources names
 */}}
 
+{{- define "dashboard-project.dashboard_init_container" -}}
+{{- default "dashboard-init-container" .Values.init_container.name | trunc 63 | trimSuffix "-" }}
+{{- end}}
+
 {{- define "dashboard-project.tools.dashboard_secret_name" -}}
 {{- default "dashboard-secret" .Values.tools.dashboard_secret_name | trunc 63 | trimSuffix "-" }}
 {{- end}}

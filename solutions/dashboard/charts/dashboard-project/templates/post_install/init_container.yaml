@@ -1,17 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: init-job
-  namespace: dashboard
+  name: {{ include "dashboard-project.dashboard_init_container" . }}
+  namespace: {{ include "dashboard-project.tools.namespace" . }}
+  labels:
+    {{- include "dashboard-project.labels" . | nindent 4 }}
   annotations:    
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "-5"
 spec:
   template:
     spec:
-      serviceAccountName: init-job
+      serviceAccountName: {{ include "dashboard-project.dashboard_init_container" . }}
       containers:
-      - name: init-job
+      - name: {{ include "dashboard-project.dashboard_init_container" . }}
         image: debian:buster                
         command: [ "/bin/bash", "-c", "--" ]
         args:
@@ -34,4 +36,4 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: init-job
+            name: {{ include "dashboard-project.dashboard_init_container" . }}
