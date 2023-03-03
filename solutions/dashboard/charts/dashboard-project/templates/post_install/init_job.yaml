@@ -19,6 +19,17 @@ spec:
         volumeMounts:
           - mountPath: /data
             name: config-volume
+        env:               
+          - name: ELASTICSEARCH_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: elasticsearch_username
+                name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}
+          - name: ELASTICSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: elasticsearch_password
+                name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}                
       restartPolicy: Never
       volumes:
         - name: config-volume

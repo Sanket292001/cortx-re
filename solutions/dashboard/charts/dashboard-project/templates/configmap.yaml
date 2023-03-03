@@ -7,11 +7,76 @@ data:
   configure.sh: |- 
     #! /bin/bash
 
-    apt update && apt install -y curl
+    # Section Displaying Functions
+    displaySection() {
+      echo "\n\n"
+      echo "---------------------------------------"
+      echo "\t$1"
+      echo "---------------------------------------"
+      echo "\n"
+    }
+
+    # Installation Seciton
+    displaySection "Update APT and Install Packages"
+
+    apt update && apt install -y curl jq
+    
     curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && \
           chmod +x ./kubectl && \
           mv ./kubectl /usr/local/bin/kubectl
-    kubectl version --short
     
-    # Trigger Logstash Job
-    kubectl create job --from=cronjob/dashboard-logstash dashboard-logstash-manual-002 -n dashboard
+    kubectl version --short
+
+    # Setting Kibana Dashboard
+    displaySection "Setting up Kibana Dashboard"
+    
+    curl https://api.github.com/repos/Sanket292001/cortx-re/contents/solutions/dashboard/build/kibana/KibanaDashboard.ndjson?ref=dashboard | jq -r ".content" | base64 --decode > KibanaDashboard.ndjson
+
+    curl -u "$ELASTICSEARCH_USERNAME:$ELASTICSEARCH_PASSWORD" --request POST 'http://dashboard-kibana-kb-http.elastic.svc:5601/api/saved_objects/_import?overwrite=true' \
+    --header 'kbn-xsrf: true' \
+    --form 'file=@"KibanaDashboard.ndjson"'
+
+    # Triggring Jobs
+    displaySection "Trigger CronJobs"
+
+    # Trigger Codacy Job only if it allowed to create
+    {{- if .Values.tools.create.codacy -}}
+    {
+      kubectl create job --from=cronjob/dashboard-codacy dashboard-codacy-manual-001 -n dashboard
+      echo "Codacy CronJob Trigger Successful"
+    } || {
+      echo "Codacy CronJob Trigger Failed"
+    }
+    {{- end }}
+
+    # Trigger GitHub Job only if it allowed to create
+    {{- if .Values.tools.create.github -}}
+    {
+      kubectl create job --from=cronjob/dashboard-github dashboard-github-manual-001 -n dashboard
+      echo "GitHub CronJob Trigger Successful"
+    } || {
+      echo "GitHub CronJob Trigger Failed"
+    }
+    {{- end }}
+
+    # Trigger Jenkins Job only if it allowed to create
+    {{- if .Values.tools.create.jenkins -}}
+    {
+      kubectl create job --from=cronjob/dashboard-jenkins dashboard-jenkins-manual-001 -n dashboard
+      echo "Jenkins CronJob Trigger Successful"
+    } || {
+      echo "Jenkins CronJob Trigger Failed"
+    }
+    {{- end }}
+
+    # Always Trigger Logstash Job
+    {
+      kubectl create job --from=cronjob/dashboard-logstash dashboard-logstash-manual-002 -n dashboard
+      echo "Logstash CronJob Trigger Successful"
+    } || {
+      echo "Logstash CronJob Trigger Failed"
+    }
+    
+
+    
+   
