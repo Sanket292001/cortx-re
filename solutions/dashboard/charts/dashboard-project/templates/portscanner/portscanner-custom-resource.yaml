@@ -1,0 +1,18 @@
+{{- if .Values.tools.create.portscanner -}}
+apiVersion: seagate.com/v1
+kind: DashboardPortScanner
+metadata:
+  name: {{ include "dashboard-project.port-scanner.name" . }}
+  namespace: {{ include "dashboard-project.tools.namespace" . }}
+  labels:
+    module: portscanner
+    {{- include "dashboard-project.labels" . | nindent 4 }}
+spec:
+  namespace: {{ include "dashboard-project.tools.namespace" . }}
+  scanNamespace: {{ .Values.portscanner.cr.scanNamespace }}
+  scanObject: {{ .Values.portscanner.cr.scanObject }}
+  allowedPorts: 
+    {{- range .Values.portscanner.cr.allowedPorts }}
+    - {{ . | int }}
+    {{- end }}
+{{- end }}

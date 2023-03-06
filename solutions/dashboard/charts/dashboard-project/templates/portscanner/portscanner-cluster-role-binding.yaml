@@ -1,0 +1,14 @@
+{{- if .Values.tools.create.portscanner -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "dashboard-project.port-scanner.cluster-role-binding-name" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "dashboard-project.port-scanner.cluster-role-name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "dashboard-project.port-scanner.service-account-name" . }}
+    namespace: {{ include "dashboard-project.tools.namespace" . }}
+{{- end }}

@@ -1,0 +1,43 @@
+{{- if .Values.tools.create.portscanner -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "dashboard-project.port-scanner.cluster-role-name" . }}
+rules:
+  - apiGroups:
+      - seagate.com
+    resources:
+      - dashboardportscanners
+    verbs:
+      - "*"
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - "*"
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - endpoints
+      - events
+    verbs:
+      - "*"
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - "*"
+{{- end }}
