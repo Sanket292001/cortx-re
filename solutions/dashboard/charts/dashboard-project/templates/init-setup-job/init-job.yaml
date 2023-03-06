@@ -7,7 +7,6 @@ metadata:
     {{- include "dashboard-project.labels" . | nindent 4 }}
   annotations:    
     "helm.sh/hook": post-install
-    "helm.sh/hook-weight": "-5"
 spec:
   template:
     spec:
