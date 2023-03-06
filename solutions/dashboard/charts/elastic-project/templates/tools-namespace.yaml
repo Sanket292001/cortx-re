@@ -1,0 +1,10 @@
+{{- if .Values.tools.createNamespace -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "elastic-project.tools.namespace" . }}
+  annotations:
+    "helm.sh/resource-policy": "keep"
+  labels:
+    name: {{ include "elastic-project.tools.namespace" . }}
+{{- end }}
