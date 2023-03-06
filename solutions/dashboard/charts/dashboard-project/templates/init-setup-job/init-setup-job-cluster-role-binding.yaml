@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: init-job
+  name: {{ include "dashboard-project.init-setup-job" . }}
 roleRef:
   kind: ClusterRole
-  name: init-job
+  name: {{ include "dashboard-project.init-setup-job" . }}
   apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: ServiceAccount
-    name: init-job
-    namespace: dashboard
+    name: {{ include "dashboard-project.init-setup-job" . }}
+    namespace: {{ include "dashboard-project.tools.namespace" . }}

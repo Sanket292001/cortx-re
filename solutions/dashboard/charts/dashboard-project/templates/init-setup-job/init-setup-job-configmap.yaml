@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "dashboard-project.dashboard_init_container" . }}
+  name: {{ include "dashboard-project.init-setup-job" . }}
   namespace: {{ include "dashboard-project.tools.namespace" . }}
   labels:
     {{- include "dashboard-project.labels" . | nindent 4 }}
@@ -17,26 +17,6 @@ data:
       echo "---------------------------------------"
       echo "\n"
     }
-
-    # Installation Seciton
-    displaySection "Update APT and Install Packages"
-
-    apt update && apt install -y curl jq
-    
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && \
-          chmod +x ./kubectl && \
-          mv ./kubectl /usr/local/bin/kubectl
-    
-    kubectl version --short
-
-    # Setting Kibana Dashboard
-    displaySection "Setting up Kibana Dashboard"
-    
-    curl https://api.github.com/repos/Sanket292001/cortx-re/contents/solutions/dashboard/build/kibana/KibanaDashboard.ndjson?ref=dashboard | jq -r ".content" | base64 --decode > KibanaDashboard.ndjson
-
-    curl -u "$ELASTICSEARCH_USERNAME:$ELASTICSEARCH_PASSWORD" --request POST 'http://dashboard-kibana-kb-http.elastic.svc:5601/api/saved_objects/_import?overwrite=true' \
-    --header 'kbn-xsrf: true' \
-    --form 'file=@"KibanaDashboard.ndjson"'
 
     # Triggring Jobs
     displaySection "Trigger CronJobs"

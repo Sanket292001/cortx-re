@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dashboard-project.dashboard_init_container" . }}
+  name: {{ include "dashboard-project.init-setup-job" . }}
   namespace: {{ include "dashboard-project.tools.namespace" . }}
   labels:
     {{- include "dashboard-project.labels" . | nindent 4 }}
@@ -10,29 +10,18 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: {{ include "dashboard-project.dashboard_init_container" . }}
+      serviceAccountName: {{ include "dashboard-project.init-setup-job" . }}
       containers:
-      - name: {{ include "dashboard-project.dashboard_init_container" . }}
+      - name: {{ include "dashboard-project.init-setup-job" . }}
         image: debian:buster                
         command: [ "/bin/bash", "-c", "--" ]
         args:
           - "sh /data/configure.sh"
         volumeMounts:
           - mountPath: /data
-            name: config-volume
-        env:               
-          - name: ELASTICSEARCH_USERNAME
-            valueFrom:
-              secretKeyRef:
-                key: elasticsearch_username
-                name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}
-          - name: ELASTICSEARCH_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: elasticsearch_password
-                name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}                
+            name: config-volume            
       restartPolicy: Never            
       volumes:
         - name: config-volume
           configMap:
-            name: {{ include "dashboard-project.dashboard_init_container" . }}
+            name: {{ include "dashboard-project.init-setup-job" . }}

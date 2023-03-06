@@ -10,7 +10,7 @@ local_path_provisioner:
 volumeClaimTemplates:
   storageClass: local-path
 
-init_container:
+initSetupJob:
   name: ""
 
 tools:

@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "elastic-project.init-setup-job" . }}
+  namespace: {{ include "elastic-project.tools.namespace" . }}
+  labels:
+    {{- include "elastic-project.labels" . | nindent 4 }}
+  annotations:    
+    "helm.sh/hook": post-install
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ include "elastic-project.init-setup-job" . }}
+      containers:
+      - name: {{ include "elastic-project.init-setup-job" . }}
+        image: debian:buster                
+        command: [ "/bin/bash", "-c", "--" ]
+        args:
+          - "sh /data/configure.sh"
+        volumeMounts:
+          - mountPath: /data
+            name: config-volume
+        env:               
+          - name: ELASTICSEARCH_USERNAME
+            value: ""
+          - name: ELASTICSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: elastic
+                name: {{ include "elastic-project.elasticsearch.name" . }}-es-elastic-user                
+      restartPolicy: Never            
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "elastic-project.init-setup-job" . }}

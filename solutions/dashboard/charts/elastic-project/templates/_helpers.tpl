@@ -24,6 +24,9 @@ Defining Namespace
 {{- default "elastic" .Values.tools.namespace | trunc 63 | trimSuffix "-" }}
 {{- end}}
 
+{{- define "elastic-project.init-setup-job" -}}
+{{- default "elastic-init-setup-job" .Values.initSetupJob.name | trunc 63 | trimSuffix "-" }}
+{{- end}}
 
 {{/*
 Create chart name and version as used by the chart label.
