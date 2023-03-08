@@ -17,6 +17,17 @@ data:
       echo "---------------------------------------"
       echo "\n"
     }
+  
+    # Installation Seciton
+    displaySection "Update APT and Install Packages"
+
+    apt update && apt install -y curl jq
+
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && \
+          chmod +x ./kubectl && \
+          mv ./kubectl /usr/local/bin/kubectl
+
+    kubectl version --short
 
     # Triggring Jobs
     displaySection "Trigger CronJobs"
