@@ -7,10 +7,15 @@ metadata:
     {{- include "elastic-project.labels" . | nindent 4 }}
   annotations:    
     "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-1"
 spec:
   template:
     spec:
-      serviceAccountName: {{ include "elastic-project.init-setup-job" . }}
+      initContainers:
+      - name: init-job-container
+        image: debian:buster
+        command: ["/bin/bash","-c","--"]
+        args: ["apt update && apt install -y curl && while [ $(curl -Lsw '%{http_code}' http://{{ include "elastic-project.kibana.name" . }}-kb-http.{{ include "elastic-project.tools.namespace" . }}.svc.cluster.local:{{ .Values.kibana.service.port }} -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the {{ include "elastic-project.kibana.name" . }} ...'; done"]
       containers:
       - name: {{ include "elastic-project.init-setup-job" . }}
         image: debian:buster                
@@ -22,7 +27,7 @@ spec:
             name: config-volume
         env:               
           - name: ELASTICSEARCH_USERNAME
-            value: ""
+            value: {{ required "Elasticsearch Username is Required" .Values.elastic_user.username }}
           - name: ELASTICSEARCH_PASSWORD
             valueFrom:
               secretKeyRef:

@@ -18,8 +18,9 @@ volumeClaimTemplates:
 
 initSetupJob:
   name: ""
-  
+
 elastic_user:
+  username: ""
   password: ""
 
 elasticsearch:
