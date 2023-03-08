@@ -13,6 +13,26 @@ spec:
     spec:
       template:
         spec:
+          initContainers:
+          - name: init-job-container-mongo
+            image: debian:buster
+            command: ["/bin/bash","-c","--"]
+            args: ["apt update && apt install -y curl && while [ $(curl -Lsw '%{http_code}' http://{{ .Values.dashboard_configmap.mongodb_connection_url }} -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the {{ include "dashboard-project.mongodb.name" . }} ...'; done"]
+          - name: init-job-container-elastic
+            image: debian:buster
+            command: ["/bin/bash","-c","--"]
+            args: ["apt update && apt install -y curl && while [ $(curl -u $ELASTICSEARCH_USERNAME:$ELASTICSEARCH_PASSWORD -Lsw '%{http_code}' http://{{ .Values.dashboard_configmap.elasticsearch_http_service }}:{{ .Values.dashboard_configmap.elasticsearch_port }} -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the {{ .Values.dashboard_configmap.elasticsearch_http_service }} service...'; done"]
+            env:
+              - name: ELASTICSEARCH_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    key: elasticsearch_username
+                    name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}
+              - name: ELASTICSEARCH_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: elasticsearch_password
+                    name: {{ include "dashboard-project.tools.dashboard_secret_name" . }}
           containers:
             - name: logstash
               image: {{ .Values.logstash.image }}
