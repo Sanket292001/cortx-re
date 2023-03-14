@@ -18,6 +18,7 @@ volumeClaimTemplates:
 
 initSetupJob:
   name: ""
+  postInstall: true
 
 elastic_user:
   username: ""
