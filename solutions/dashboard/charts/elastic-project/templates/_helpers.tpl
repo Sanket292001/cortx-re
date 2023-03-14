@@ -12,6 +12,10 @@ Defining resources names
 {{- end}}
 
 
+{{- define "elastic-project.secret.name" -}}
+{{- default "dashboard-elasticsearch-secret" .Values.elasticsearch_secret.name | trunc 63 | trimSuffix "-" }}
+{{- end}}
+
 {{/*
 Defining Namespace
 */}}

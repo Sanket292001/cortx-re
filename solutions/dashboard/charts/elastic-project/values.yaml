@@ -20,8 +20,11 @@ initSetupJob:
   name: ""
   postInstall: true
 
-elastic_user:
+elasticsearch_secret:
+  name: ""
   username: ""
+
+elastic_user:
   password: ""
 
 elasticsearch:

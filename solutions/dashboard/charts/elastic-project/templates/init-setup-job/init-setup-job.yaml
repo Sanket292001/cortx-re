@@ -20,7 +20,10 @@ spec:
         args: ["apt update && apt install -y curl && while [ $(curl -u $ELASTICSEARCH_USERNAME:$ELASTICSEARCH_PASSWORD -Lsw '%{http_code}' http://{{ include "elastic-project.elasticsearch.name" . }}-es-internal-http:{{ .Values.elasticsearch.service.port }} -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the {{ include "elastic-project.elasticsearch.name" . }} service...'; done"]
         env:
           - name: ELASTICSEARCH_USERNAME
-            value: {{ required "Elasticsearch Username is Required" .Values.elastic_user.username }}
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: {{ include "elastic-project.secret.name" . }}
           - name: ELASTICSEARCH_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -41,7 +44,10 @@ spec:
             name: config-volume
         env:               
           - name: ELASTICSEARCH_USERNAME
-            value: {{ required "Elasticsearch Username is Required" .Values.elastic_user.username }}
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: {{ include "elastic-project.secret.name" . }}
           - name: ELASTICSEARCH_PASSWORD
             valueFrom:
               secretKeyRef:
