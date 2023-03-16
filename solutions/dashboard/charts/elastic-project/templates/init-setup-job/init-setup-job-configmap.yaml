@@ -6,15 +6,15 @@ metadata:
   labels: {{ include "elastic-project.labels" . | nindent 4 }}
 data:
   configure.sh: |-
-    #! /bin/bash
+    #! /bin/ash
 
     # Section Displaying Functions
     displaySection() {
-      echo "\n\n"
-      echo "---------------------------------------"
-      echo "\t$1"
-      echo "---------------------------------------"
-      echo "\n"
+      echo -e "\n\n"
+      echo -e "---------------------------------------"
+      echo -e "\t$1"
+      echo -e "---------------------------------------"
+      echo -e "\n"
     }
 
     # Installation Seciton
