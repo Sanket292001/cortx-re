@@ -18,20 +18,14 @@ data:
     }
 
     # Installation Seciton
-    displaySection "Update APT and Install Packages"
+    displaySection "Update APK and Install Packages"
 
-    apt update && apt install -y curl jq
-
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && \
-          chmod +x ./kubectl && \
-          mv ./kubectl /usr/local/bin/kubectl
-
-    kubectl version --short
+    apk update && apk add curl jq
 
     # Setting Kibana Dashboard
     displaySection "Setting up Kibana Dashboard"
 
-    curl https://api.github.com/repos/Sanket292001/cortx-re/contents/solutions/dashboard/build/kibana/KibanaDashboard.ndjson?ref=dashboard | jq -r ".content" | base64 --decode > KibanaDashboard.ndjson
+    curl https://api.github.com/repos/Sanket292001/cortx-re/contents/solutions/dashboard/build/kibana/KibanaDashboard.ndjson?ref=dashboard | jq -r ".content" | base64 -d > KibanaDashboard.ndjson
 
     curl -u "$ELASTICSEARCH_USERNAME:$ELASTICSEARCH_PASSWORD" --request POST 'http://dashboard-kibana-kb-http.elastic.svc:5601/api/saved_objects/_import?overwrite=true' \
     --header 'kbn-xsrf: true' \
